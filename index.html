@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>《交错残响》单机版</title>
+    <link rel="icon" type="image/x-icon" href="static/picture/icon.ico">
+    <style>
+        :root{
+            --pixiv:#0096fa;
+            --pixiv-d:#0066cc;
+            --pixiv-l:#e5f5ff;
+            --ink:#1f2733;
+            --ink-2:#3e4a5c;
+            --ink-3:#6b7888;
+            --ink-4:#9aa5b4;
+            --line:#e6e9ee;
+            --line-2:#f0f2f5;
+            --bg:#f4f6f8;
+            --card:#fff;
+            --shadow:0 1px 3px rgba(20,40,80,.06),0 8px 24px rgba(20,40,80,.06);
+            --shadow-h:0 2px 6px rgba(20,40,80,.09),0 14px 36px rgba(20,40,80,.11);
+            --r:14px;
+        }
+        *{box-sizing:border-box;margin:0;padding:0}
+        html{scroll-behavior:smooth}
+        body{
+            font-family:"Helvetica Neue","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+            color:var(--ink);background:var(--bg);line-height:1.8;
+            -webkit-font-smoothing:antialiased;
+            cursor: url('static/picture/cursor.png'), auto;
+        }
+        a{color:var(--pixiv-d);text-decoration:none}
+        a:hover{text-decoration:underline}
+
+        .wrap{max-width:1100px;margin:0 auto;padding:26px 22px 90px}
+
+        .noimg{position:absolute;inset:auto 16px 16px;border:1.5px dashed rgba(255,255,255,.7);border-radius:10px;
+            color:rgba(255,255,255,.92);font-size:12.5px;padding:10px;text-align:center}
+
+        .info{display:flex;flex-direction:column;gap:16px}
+        .info .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;box-shadow:var(--shadow)}
+        .tagline{display:flex;flex-wrap:wrap;gap:7px}
+        .tag{font-size:11.5px;color:var(--ink-3);background:var(--line-2);border-radius:6px;padding:3px 10px}
+        .tag.blue{color:var(--pixiv-d);background:var(--pixiv-l)}
+        h1{font-size:clamp(22px,3.4vw,30px);font-weight:800;line-height:1.35;margin-top:12px}
+        .who{font-size:13.5px;color:var(--ink-3);margin-top:10px}
+        .who b{color:var(--ink-2);font-weight:700}
+
+        .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border-radius:10px;overflow:hidden}
+        .stats div{background:var(--card);text-align:center;padding:13px 6px}
+        .stats span{display:block;font-size:11px;color:var(--ink-4);letter-spacing:.1em}
+        .stats b{display:block;font-size:16px;font-weight:800;margin-top:2px}
+
+        .acts{display:flex;gap:10px}
+        .btn{flex:1;text-align:center;font-size:13.5px;font-weight:700;border-radius:10px;padding:12px 16px;
+            border:1px solid transparent;cursor:pointer;transition:.18s}
+        .btn.primary{background:var(--pixiv);color:#fff}
+        .btn.primary:hover{background:var(--pixiv-d);transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,150,250,.32)}
+        .btn.ghost{background:var(--card);color:var(--pixiv-d);border-color:var(--pixiv)}
+        .btn.ghost:hover{background:var(--pixiv-l)}
+        .btn:active{transform:translateY(0)}
+
+        section{margin-top:34px}
+        .sec-h{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+        .sec-h h2{font-size:17.5px;font-weight:800}
+        .sec-h .en{font-size:11px;letter-spacing:.2em;color:var(--ink-4);text-transform:uppercase;font-weight:700}
+        .sec-h .rule{flex:1;height:1px;background:var(--line)}
+        .lead{color:var(--ink-3);font-size:13.5px;margin-bottom:14px}
+
+        .text{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px 24px;box-shadow:var(--shadow);font-size:14.5px;color:var(--ink-2)}
+        .text p{margin:0 0 14px}
+        .text p:last-child{margin-bottom:0}
+        .text b{color:var(--ink)}
+        .drop{background:var(--pixiv-l);border-left:3px solid var(--pixiv);border-radius:0 8px 8px 0;padding:13px 16px;margin:16px 0;color:var(--pixiv-d);font-size:13.5px}
+        .drop:last-child{margin-bottom:0}
+
+        .claims{display:grid;gap:12px}
+        .claim{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--pixiv);
+            border-radius:10px;padding:16px 20px;box-shadow:var(--shadow);transition:.18s}
+        .claim:hover{box-shadow:var(--shadow-h);transform:translateY(-2px)}
+        .claim h3{font-size:14.5px;font-weight:800;margin-bottom:5px;display:flex;gap:9px;align-items:baseline}
+        .claim .n{color:var(--pixiv);font-size:11.5px;font-weight:800;letter-spacing:.08em;flex:0 0 auto}
+        .claim p{font-size:13.5px;color:var(--ink-3);margin:0}
+        .claim p b{color:var(--ink-2)}
+        .claim.soft{border-left-color:var(--ink-4)}
+        .claim.soft .n{color:var(--ink-4)}
+
+        .grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+        @media(max-width:700px){.grid2{grid-template-columns:1fr}}
+        .work{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;
+            box-shadow:var(--shadow);transition:.2s}
+        .work:hover{box-shadow:var(--shadow-h);transform:translateY(-3px)}
+        .work .ph{aspect-ratio:16/9;position:relative;overflow:hidden;background:#eef2f7} /* 浅灰背景防止图片加载前空白 */
+        .work .ph img{
+          width:100%;
+          height:100%;
+          object-fit:cover;
+          display:block;
+          transition:transform .3s ease;
+        }
+        .work:hover .ph img{transform:scale(1.02)}
+        .work .ph .lb{position:absolute;left:12px;bottom:12px;background:rgba(255,255,255,.92);
+            font-size:11px;font-weight:700;color:var(--ink-2);padding:4px 10px;border-radius:6px;backdrop-filter:blur(4px);}
+        .work .bd{padding:14px 16px}
+        .work .bd .k{font-size:11.5px;color:var(--ink-4);letter-spacing:.1em;margin-bottom:5px}
+        .work .bd .t{font-size:14.5px;font-weight:700;line-height:1.5}
+        .work .bd .d{font-size:12.5px;color:var(--ink-3);margin-top:6px}
+
+        .tl{border-left:2px solid var(--line);padding-left:22px;margin-left:6px}
+        .tl .it{position:relative;padding-bottom:20px}
+        .tl .it:last-child{padding-bottom:0}
+        .tl .it::before{content:"";position:absolute;left:-29px;top:7px;width:11px;height:11px;border-radius:50%;
+            background:#fff;border:2.5px solid var(--pixiv)}
+        .tl .d{font-size:12px;font-weight:800;color:var(--pixiv-d);letter-spacing:.05em}
+        .tl .c{font-size:13.5px;color:var(--ink-2)}
+      </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="info">
+            <div class="card">
+                <div class="tagline">
+                    <span class="tag blue">#弹幕</span>
+                    <span class="tag">#近战格斗</span>
+                    <span class="tag">#离线</span>
+                </div>
+                <h1>《交错残响》单机版</h1>
+                <div class="who">发布于 2026.10.07 ｜ 当前版本 v1.3.0</div>
+            </div>
+        </div>
+
+        <section id="about">
+            <div class="sec-h"><h2>游戏介绍</h2><span class="en">About this game</span><span class="rule"></span></div>
+            <div class="text">
+                <p>萌系“弹幕格斗”游戏《交错残响》是一款结合了弹幕射击，格斗对战的美少女战斗冒险游戏。</p>
+                <p>你扮演一位被少女们称呼为“佑御者”的人，一起发现的还有体内无法控制却又十分强大的神秘力量。</p>
+                <p>各位“佑御者”准备好在各方势力交错的命运中，运用自己的力量同少女们一起抵抗异世界的威胁，一起探寻世界背后的真相了吗？</p>
+                <div class="drop">本网络游戏适合16岁以上的用户使用。为了您的健康，请合理控制游戏时间。</div>
+            </div>
+        </section>
+
+        <section id="gallery">
+            <div class="sec-h"><h2>画面</h2><span class="en">Gallery</span><span class="rule"></span></div>
+            <div class="grid2">
+                <div class="work">
+                    <div class="ph">
+                        <img src="static/picture/1.jpg" alt="">
+                    </div>
+                    <div class="bd">
+                        <div class="k">SCENE 01</div>
+                        <div class="t">超萌立绘</div>
+                        <div class="d">御姐萝莉等你来解锁</div>
+                    </div>
+                </div>
+                <div class="work">
+                    <div class="ph">
+                        <img src="static/picture/2.jpg" alt="">
+                    </div>
+                    <div class="bd">
+                        <div class="k">SCENE 02</div>
+                        <div class="t">双重打击</div>
+                        <div class="d">找到专属游戏的乐趣</div>
+                    </div>
+                </div>
+                <div class="work">
+                    <div class="ph">
+                        <img src="static/picture/3.jpg" alt="">
+                    </div>
+                    <div class="bd">
+                        <div class="k">SCENE 03</div>
+                        <div class="t">多样玩法</div>
+                        <div class="d">沉浸体验解锁新关卡</div>
+                    </div>
+                </div>
+                <div class="work">
+                    <div class="ph">
+                        <img src="static/picture/4.jpg" alt="">
+                    </div>
+                    <div class="bd">
+                        <div class="k">SCENE 04</div>
+                        <div class="t">欧气召唤</div>
+                        <div class="d">30连抽必出三星角色</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="rights">
+            <div class="sec-h"><h2>声明</h2><span class="en">Statement</span><span class="rule"></span></div>
+            <div class="claims">
+                <div class="claim">
+                    <h3><span class="n">01</span>非官方</h3>
+                    <p>本作与《交错残响》的原开发、发行及运营之间不存在任何授权或合作关系，也从未以任何官方名义对外宣传。</p>
+                </div>
+                <div class="claim">
+                    <h3><span class="n">02</span>非商业用途</h3>
+                    <p>本作完全免费，不收取任何费用，不含内购、广告、付费解锁、打赏入口或任何形式的盈利行为；不将原作素材用于任何商业场景。如在其他平台遇到本作并发现需要付费，请及时举报。</p>
+                </div>
+                <div class="claim">
+                    <h3><span class="n">03</span>禁止二次分发</h3>
+                    <p>未经发布者同意，不得对本作修改后重新打包发布、整合至其他项目或以任何形式二次分发。</p>
+                </div>
+                <div class="claim">
+                    <h3><span class="n">04</span>数据运行</h3>
+                    <p>本作为纯离线运行，不收集、不上传、不共享任何个人信息与设备信息；所有进度仅保存在本机。</p>
+                </div>
+                <div class="claim soft">
+                    <h3><span class="n">05</span>发布者的话</h3>
+                    <p>目前的单机版也许粗糙，也许体验不好，但已经尽量还原《交错残响》原作，感谢你的理解及尊重。</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="acts" style="margin-top:16px">
+                    <a class="btn primary" href="download.html">已阅读并同意声明，前往下载</a>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="sec-h"><h2>更新记录</h2><span class="en">Dev Log</span><span class="rule"></span></div>
+            <div class="text"><div class="tl">
+                <div class="it"><div class="d">2026.10.08 · v1.3.0</div><div class="c">修复存档中点击储备>消耗品会异常显示专武的问题。</div></div>
+                <div class="it"><div class="d">2026.10.07 · v1.3.0</div><div class="c">大部分功能都可使用，联盟及嘟诶噜相关的联机功能已屏蔽。</div></div>
+            </div></div>
+        </section>
+    </div>
+</body>
+</html>
